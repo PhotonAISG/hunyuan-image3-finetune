@@ -1,10 +1,26 @@
-# HunyuanImage-3.0 Training Scripts
+# Finetune HunyuanImage-3.0
+
+[![License: AGPL v3](https://img.shields.io/badge/License-AGPL_v3-blue.svg)](https://www.gnu.org/licenses/agpl-3.0)
+[![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
+[![GitHub stars](https://img.shields.io/github/stars/PhotonAISG/hunyuan-image3-finetune.svg?style=social&label=Star)](https://github.com/PhotonAISG/hunyuan-image3-finetune)
+[![GitHub forks](https://img.shields.io/github/forks/PhotonAISG/hunyuan-image3-finetune.svg?style=social&label=Fork)](https://github.com/PhotonAISG/hunyuan-image3-finetune/fork)
 
 This repository contains training scripts for fine-tuning HunyuanImage-3.0 models. Designed to work with the official model at: https://github.com/Tencent-Hunyuan/HunyuanImage-3.0.git
 
-> **Note:** This repo contains only the training scripts. Please refer to the official repository for the inference code, and documentation.
+> **Note:** This repo contains only the training scripts. Please refer to the official repository for the inference code, and documentation. 
+\
+\
+This repository is **not** the official training scripts for HunyuanImage-3.0 and is **not affiliated** with Tencent's Hunyuan team. These scripts are independently developed for research and educational purposes.
+For the official Hunyuan Image 3.0 repository (only has inference code), please visit: [HunyuanImage-3.0 Official Repository](https://github.com/Tencent-Hunyuan/HunyuanImage-3.0.git)
 
----
+<img src="assets/hunyuan_overview.png" alt="Overview of the HunyuanImage-3.0 architecture and training pipeline" title="Overview of the HunyuanImage-3.0 architecture and training pipeline">
+
+<p align="center">
+<em>Overview of the HunyuanImage-3.0 architecture and training pipeline (image source: Hunyuan Image 3 Technical Report)</em>
+</p>
+
+Unified vision-language models capable of both understanding and generation are emerging as the dominant paradigm in multimodal AI. **HunyuanImage-3.0** is currently the largest open-source unified model (an 80B MoE model), demonstrating exceptional performance across both tasks. While the [official repository](https://github.com/Tencent-Hunyuan/HunyuanImage-3.0.git) focuses on inference, this project empowers the community to train and fine-tune this state-of-the-art model. By providing a comprehensive pipeline built on Hugging Face Trainer, DeepSpeed, and PEFT, we enable efficient experimentation and customization on your own datasets.
+
 
 ## 📋 Table of Contents
 
@@ -33,21 +49,16 @@ This repository contains training scripts for fine-tuning HunyuanImage-3.0 model
     </ol>
 </details>
 
----
+## 👥 Contributors
 
-## ⚠️ Disclaimer
-
-This repository is **not** the official training scripts for HunyuanImage-3.0 and is **not affiliated** with Tencent's Hunyuan team. These scripts are independently developed for research and educational purposes.
-
-For the official repository, please visit: [HunyuanImage-3.0 Official Repository](https://github.com/Tencent-Hunyuan/HunyuanImage-3.0.git)
-
----
+<a href="https://github.com/PhotonAISG/hunyuan-image3-finetune/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=PhotonAISG/hunyuan-image3-finetune" />
+</a>
 
 ## 🔥🔥🔥 News
 
 - **[2025-12]** Initial release of HunyuanImage-3.0 training scripts
 
----
 
 ## 🔍 Overview
 
@@ -59,7 +70,6 @@ The training framework supports two training modes:
 
 > **Note:** Image understanding (MMU) pipeline is not yet implemented.
 
----
 
 ## 💻 System Requirements
 
@@ -75,7 +85,6 @@ Below are the minimum hardware requirements for training HunyuanImage-3.0 with *
 
 > **Note:** Full model training requires significantly more VRAM.
 
----
 
 ## 🚀 Quick Start
 
@@ -489,18 +498,20 @@ There is a bug in the official HunyuanImage-3.0 repository's `tokenizer_wrapper.
 
 ## 📝 License
 
-This repository is licensed under the Tencent Hunyuan Community License Agreement. See the [LICENSE](./LICENSE) file for details.
+This repository is licensed under the AGPL. See the [LICENSE](./LICENSE) file for details. The official Hunyuan Image 3.0 repository is under Tencent Hunyuan Community License Agreement.
 
 ## 📖 Citation
 
-If you use these training scripts, please cite the original HunyuanImage-3.0 paper and repository:
+If you use these training scripts for research, please cite this repository:
 
 ```bibtex
-@article{cao2025hunyuanimage,
-  title={HunyuanImage 3.0 Technical Report},
-  author={Cao, Siyu and Chen, Hangting and Chen, Peng and Cheng, Yiji and Cui, Yutao and Deng, Xinchi and Dong, Ying and Gong, Kipper and Gu, Tianpeng and Gu, Xiusen and others},
-  journal={arXiv preprint arXiv:2509.23951},
-  year={2025}
+@misc{hunyuanimage3finetune,
+  author = {Yang Zhang, Wenzhong Liang, Yanfei Dong},
+  title = {Finetune HunyuanImage-3.0},
+  year = {2025},
+  publisher = {GitHub},
+  journal = {GitHub repository},
+  howpublished = {\url{https://github.com/PhotonAISG/hunyuan-image3-finetune}}
 }
 ```
 
