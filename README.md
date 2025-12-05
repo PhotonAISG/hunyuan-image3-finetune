@@ -51,10 +51,26 @@ Unified vision-language models capable of both understanding and generation are 
 </details>
 
 ## 👥 Contributors
-This repo is developed and maintained by Pixo team (official@pixo.video).
-<a href="https://github.com/PhotonAISG/hunyuan-image3-finetune/graphs/contributors">
-  <img src="https://contrib.rocks/image?repo=PhotonAISG/hunyuan-image3-finetune" />
-</a>
+This repo is developed and maintained by Pixo team (official@pixo.video). For inqueries, you can also reach out to yangzhang@u.nus.edu.
+
+<!-- <a href="https://github.com/PhotonAISG/hunyuan-image3-finetune/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=PhotonAISG/hunyuan-image3-finetune&columns=12&t=20241210" />
+</a> -->
+<div style="display: flex; gap: 2px;">
+  <a href="https://github.com/PhotonAISG">
+    <img src="https://github.com/PhotonAISG.png" width="50" style="border-radius: 50%;" alt="PhotonAISG"/>
+  </a>
+  
+  <a href="https://github.com/YourUsername">
+    <img src="https://github.com/YaNgZhAnG-V5.png" width="50" style="border-radius: 50%;" alt="User2"/>
+  </a>
+  <a href="https://github.com/YourUsername">
+    <img src="https://github.com/LWZ19.png" width="50" style="border-radius: 50%;" alt="User2"/>
+  </a>
+  <a href="https://github.com/YourUsername">
+    <img src="https://github.com/miafei.png" width="50" style="border-radius: 50%;" alt="User2"/>
+  </a>
+</div>
 
 ## 🎨 Trained LoRAs
 
