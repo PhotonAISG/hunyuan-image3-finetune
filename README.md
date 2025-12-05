@@ -51,7 +51,7 @@ Unified vision-language models capable of both understanding and generation are 
 </details>
 
 ## 👥 Contributors
-
+This repo is developed and maintained by Pixo team (official@pixo.video).
 <a href="https://github.com/PhotonAISG/hunyuan-image3-finetune/graphs/contributors">
   <img src="https://contrib.rocks/image?repo=PhotonAISG/hunyuan-image3-finetune" />
 </a>
