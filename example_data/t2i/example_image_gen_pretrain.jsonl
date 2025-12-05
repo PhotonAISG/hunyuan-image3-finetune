@@ -1,0 +1,3 @@
+{"type": "image_generation", "messages": [{"role": "user", "content": "A red sports car on a mountain road at sunset, professional photography"}], "target_image": "images/red_car_sunset.jpg"}
+{"type": "image_generation", "messages": [{"role": "user", "content": "A serene lake surrounded by autumn trees, oil painting style"}], "target_image": "images/lake_autumn.jpg"}
+{"type": "image_generation", "messages": [{"role": "user", "content": "Modern office workspace with laptop and coffee, clean minimalist design"}], "target_image": "images/office_workspace.jpg"}

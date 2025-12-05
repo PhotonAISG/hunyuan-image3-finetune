@@ -1,0 +1,14 @@
+# Dependencies
+einops>=0.8.0
+numpy==1.26.4
+pillow==11.3.0
+diffusers>=0.32.0
+safetensors==0.4.5
+tokenizers>=0.21.0
+transformers[accelerate,tiktoken]>=4.56.0
+huggingface_hub[cli]
+# flash-attn==2.8.3 --no-build-isolation
+datasets
+deepspeed
+peft
+hf_transfer
