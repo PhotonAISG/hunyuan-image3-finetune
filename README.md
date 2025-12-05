@@ -16,7 +16,7 @@ For the official Hunyuan Image 3.0 repository (only has inference code), please 
 <img src="assets/hunyuan_overview.png" alt="Overview of the HunyuanImage-3.0 architecture and training pipeline" title="Overview of the HunyuanImage-3.0 architecture and training pipeline">
 
 <p align="center">
-<em>Overview of the HunyuanImage-3.0 architecture and training pipeline (image source: Hunyuan Image 3 Technical Report)</em>
+<em>Overview of the HunyuanImage-3.0 architecture (image source: Hunyuan Image 3 Technical Report)</em>
 </p>
 
 Unified vision-language models capable of both understanding and generation are emerging as the dominant paradigm in multimodal AI. **HunyuanImage-3.0** is currently the largest open-source unified model (an 80B MoE model), demonstrating exceptional performance across both tasks. While the [official repository](https://github.com/Tencent-Hunyuan/HunyuanImage-3.0.git) focuses on inference, this project empowers the community to train and fine-tune this state-of-the-art model. By providing a comprehensive pipeline built on Hugging Face Trainer, DeepSpeed, and PEFT, we enable efficient experimentation and customization on your own datasets.
@@ -28,6 +28,7 @@ Unified vision-language models capable of both understanding and generation are 
     <summary>Table of Contents</summary>
     <ol>
         <li><a href="#-news">News</a></li>
+        <li><a href="#-trained-loras">Trained LoRAs</a></li>
         <li><a href="#-overview">Overview</a></li>
         <li><a href="#-system-requirements">System Requirements</a></li>
         <li><a href="#-quick-start">Quick Start</a></li>
@@ -54,6 +55,14 @@ Unified vision-language models capable of both understanding and generation are 
 <a href="https://github.com/PhotonAISG/hunyuan-image3-finetune/graphs/contributors">
   <img src="https://contrib.rocks/image?repo=PhotonAISG/hunyuan-image3-finetune" />
 </a>
+
+## 🎨 Trained LoRAs
+
+| Model | Description | Link |
+|-------|-------------|------|
+| HunyuanImage-3.0-Naruto-Style-Adapter | Naruto anime style | [🤗 HuggingFace](https://huggingface.co/pixosg/HunyuanImage-3.0-Naruto-Style-Adapter) |
+
+> Have a trained LoRA to share? Open a PR to add it here!
 
 ## 🔥🔥🔥 News
 
