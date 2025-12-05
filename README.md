@@ -27,8 +27,8 @@ Unified vision-language models capable of both understanding and generation are 
 <details>
     <summary>Table of Contents</summary>
     <ol>
-        <li><a href="#-news">News</a></li>
         <li><a href="#-trained-loras">Trained LoRAs</a></li>
+        <li><a href="#-news">News</a></li>
         <li><a href="#-overview">Overview</a></li>
         <li><a href="#-system-requirements">System Requirements</a></li>
         <li><a href="#-quick-start">Quick Start</a></li>

@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
 
-# Copyright 2025 [Your Name or Organization]. All Rights Reserved.
+# Copyright 2025 Pixo. All Rights Reserved.
 #
-# Licensed under the Tencent Hunyuan Community License Agreement (the "License");
-# you may not use this file except in compliance with the License.
+# This file is licensed under the GNU Affero General Public License, Version 3 (the "License").
+# You may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
 #
-#     https://github.com/Tencent-Hunyuan/HunyuanImage-3.0
+#     https://www.gnu.org/licenses/agpl-3.0.html
 #
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
