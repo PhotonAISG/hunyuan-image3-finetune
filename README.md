@@ -282,18 +282,21 @@ This generates `.pt` files containing cached latents that are automatically load
 
 ## 🛠️ Data Preparation Utilities
 
-**`prepare_training_data.py`**
-- Converts various data formats (Alpaca, ShareGPT, etc.) to training JSONL
-- Creates properly formatted message structures for text training
+**`prepare_text_data.py`**
+- Converts various text data formats (Alpaca, ShareGPT, etc.) to training JSONL
+- Creates properly formatted message structures for text-only training
+- **Use this for**: Language modeling, chat fine-tuning, instruction following
 
 **`prepare_image_gen_data.py`**
-- Converts image directories with CSV captions to training JSONL
-- Supports instruct and pretrain style formats
+- Converts image directories with CSV captions to training JSONL for image generation
+- Supports both instruct and pretrain style formats
+- Handles CSV-driven mode for duplicate captions (e.g., multiple prompts per image)
+- **Use this for**: Text-to-image generation, style transfer, image generation fine-tuning
 
 **`preprocess_images.py`**
-- Pre-encodes images with VAE encoder
-- Significantly speeds up training by avoiding repeated encoding
-- Recommended for large-scale image training
+- Pre-encodes images with VAE encoder into latent representations
+- Speed up image generation training by avoiding repeated encoding
+- Recommended for large-scale image generation training
 
 ## 📦 Dataset Module
 
@@ -416,7 +419,7 @@ More detailed usage and examples are in [train_multimodal.py](./train_multimodal
 
 1. Prepare data:
 ```bash
-python prepare_training_data.py \
+python prepare_text_data.py \
   --input_file my_data.json \
   --output_file train.jsonl
 ```

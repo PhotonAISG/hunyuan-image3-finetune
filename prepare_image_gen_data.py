@@ -200,6 +200,7 @@ def create_image_gen_dataset(
     captions_file: Optional[str] = None,
     system_prompt: Optional[str] = None,
     recursive: bool = False,
+    csv_driven: bool = False,
 ):
     """
     Create image generation training dataset in JSONL format.
@@ -213,6 +214,7 @@ def create_image_gen_dataset(
                       Falls back to filename-based captions if CSV not found.
         system_prompt: Custom system prompt for instruct style
         recursive: Recursively search subdirectories
+        csv_driven: If True, generate JSONL strictly following CSV rows (allows duplicates)
     
     Note:
         All images in the dataset will use the same aspect ratio, which should be
@@ -222,6 +224,92 @@ def create_image_gen_dataset(
     # Supported image formats
     image_exts = {'.jpg', '.jpeg', '.png', '.webp', '.bmp'}
     
+    # CSV-driven mode: generate based on CSV rows
+    if csv_driven:
+        csv_path = captions_file if captions_file else os.path.join(image_dir, 'captions.csv')
+        
+        if not os.path.isfile(csv_path):
+            raise ValueError(f"CSV-driven mode requires a captions CSV file. Not found: {csv_path}")
+        
+        print(f"CSV-driven mode: generating dataset from {csv_path}")
+        
+        # Create output directory if needed
+        os.makedirs(os.path.dirname(output_file) or '.', exist_ok=True)
+        
+        samples_created = 0
+        missing_images = []
+        skipped_rows = 0
+        unique_images = set()
+        
+        with open(csv_path, 'r', encoding='utf-8') as f:
+            reader = csv.DictReader(f)
+            
+            # Validate columns
+            if 'file_name' not in reader.fieldnames or 'text' not in reader.fieldnames:
+                raise ValueError(
+                    f"CSV file must have 'file_name' and 'text' columns. "
+                    f"Found columns: {reader.fieldnames}"
+                )
+            
+            with open(output_file, 'w', encoding='utf-8') as out:
+                for row_num, row in enumerate(reader, start=2):  # Start at 2 (header is row 1)
+                    filename = row['file_name'].strip()
+                    caption = row['text'].strip()
+                    
+                    if not filename or not caption:
+                        skipped_rows += 1
+                        continue
+                    
+                    # Check if image exists
+                    img_path = os.path.join(image_dir, filename)
+                    if not os.path.isfile(img_path):
+                        if filename not in missing_images:  # Avoid duplicate warnings
+                            missing_images.append(filename)
+                        continue
+                    
+                    # Track unique images for statistics
+                    unique_images.add(filename)
+                    
+                    # Build messages based on style
+                    if style == "instruct":
+                        messages = create_instruct_messages(caption, system_prompt)
+                    elif style == "pretrain":
+                        messages = create_pretrain_messages(caption)
+                    else:
+                        raise ValueError(f"Unknown style: {style}. Use 'instruct' or 'pretrain'")
+                    
+                    # Create sample
+                    sample = {
+                        "type": "image_generation",
+                        "messages": messages,
+                        "target_image": filename,
+                    }
+                    
+                    # Write to file
+                    out.write(json.dumps(sample, ensure_ascii=False) + '\n')
+                    samples_created += 1
+        
+        print(f"\n✓ Created {samples_created} samples in {output_file}")
+        print(f"  - {len(unique_images)} unique images")
+        print(f"  - {samples_created - len(unique_images)} duplicate entries (same image, different captions)")
+        if skipped_rows > 0:
+            print(f"  - Skipped {skipped_rows} empty rows")
+        if missing_images:
+            print(f"  ⚠ Warning: {len(missing_images)} images referenced in CSV not found:")
+            for img in missing_images[:10]:  # Show first 10
+                print(f"      - {img}")
+            if len(missing_images) > 10:
+                print(f"      ... and {len(missing_images) - 10} more")
+        print(f"  Style: {style}")
+        print(f"  CSV file: {csv_path}")
+        print(f"  Image directory: {image_dir}")
+        print(f"\nYou can now train with:")
+        print(f"  --train_data_file {output_file}")
+        print(f"  --image_root_dir {image_dir}")
+        print(f"  --sequence_template {style}")
+        return
+    
+    # Original mode: generate based on image files
     # Find all images
     image_files = []
     if recursive:
@@ -365,6 +453,13 @@ def main():
         help="Recursively search subdirectories"
     )
     
+    parser.add_argument(
+        "--csv_driven",
+        action="store_true",
+        help="Generate JSONL strictly following CSV rows (allows duplicates). "
+             "Requires --captions_file or captions.csv in image_dir."
+    )
+    
     args = parser.parse_args()
     
     # Validate image directory
@@ -377,6 +472,14 @@ def main():
         print(f"Error: Captions file not found: {args.captions_file}")
         return 1
     
+    # Validate csv_driven mode requirements
+    if args.csv_driven:
+        csv_path = args.captions_file if args.captions_file else os.path.join(args.image_dir, 'captions.csv')
+        if not os.path.isfile(csv_path):
+            print(f"Error: CSV-driven mode requires a captions CSV file.")
+            print(f"  Either provide --captions_file or ensure captions.csv exists in {args.image_dir}")
+            return 1
+    
     # Create dataset
     create_image_gen_dataset(
         image_dir=args.image_dir,
@@ -385,6 +488,7 @@ def main():
         captions_file=args.captions_file,
         system_prompt=args.system_prompt,
         recursive=args.recursive,
+        csv_driven=args.csv_driven,
     )
     
     return 0

@@ -13,17 +13,20 @@
 # limitations under the License.
 
 """
-Utility script to prepare training data for HunyuanImage-3.0 multimodal training.
+Utility script to prepare text training data for HunyuanImage-3.0 multimodal training.
+
+This script handles text-only conversation data and converts various formats
+(Alpaca, ShareGPT, etc.) to the required JSONL format.
+
+For image generation data preparation, use prepare_image_gen_data.py instead.
 
 Supported formats:
 1. Text-only: Standard conversation format for language modeling
-2. Text+Image: Conversations with image inputs for VL understanding
-3. Image Generation: Text prompts with target images for T2I training
+2. Text+Image: Conversations with image inputs for VL understanding (placeholder)
 
 Message types for HunyuanImage-3.0:
 - "text": Standard text messages (user prompts, assistant responses)
 - "joint_image": Messages that include conditional image inputs (for understanding)
-- "gen_image": Messages that represent generated images (for generation tasks)
 
 Output format: JSONL where each line is a JSON object with messages containing
 role, content, and type fields.
@@ -93,6 +96,9 @@ def create_image_understanding_sample(
     """
     Create a text+image sample for vision-language understanding.
     
+    Note: This is a placeholder function. The image understanding pipeline
+    is not yet fully implemented. For image generation, use prepare_image_gen_data.py.
+    
     Args:
         messages: List of message dicts (can include image placeholders with 'type' field)
         image_paths: List of paths to input images
@@ -109,35 +115,6 @@ def create_image_understanding_sample(
         "type": "image_understanding",
         "messages": messages,
         "images": image_paths
-    }
-
-
-def create_image_generation_sample(
-    prompt: str,
-    target_image_path: str,
-    system_prompt: str = None,
-) -> Dict[str, Any]:
-    """
-    Create an image generation training sample.
-    
-    Args:
-        prompt: Text prompt for image generation
-        target_image_path: Path to target image
-        system_prompt: Optional system prompt
-    
-    Returns:
-        Sample dict ready for training
-    """
-    messages = []
-    if system_prompt:
-        messages.append({"role": "system", "content": system_prompt, "type": "text"})
-    
-    messages.append({"role": "user", "content": prompt, "type": "text"})
-    
-    return {
-        "type": "image_generation",
-        "messages": messages,
-        "target_image": target_image_path
     }
 
 
@@ -275,35 +252,29 @@ def main():
 
 
 def create_example_data():
-    """Create example training data"""
+    """Create example text-only training data"""
     examples = []
     
-    # Example 1: Text-only conversation
+    # Example 1: Text-only conversation with system prompt
     examples.append(create_text_only_sample([
         {"role": "system", "content": "You are a helpful AI assistant.", "type": "text"},
         {"role": "user", "content": "Explain quantum computing in simple terms.", "type": "text"},
         {"role": "assistant", "content": "Quantum computing is a type of computing that uses quantum mechanics...", "type": "text"}
     ]))
     
-    # Example 2: Another text-only
+    # Example 2: Text-only without system prompt
     examples.append(create_text_only_sample([
         {"role": "user", "content": "Write a Python function to calculate factorial.", "type": "text"},
         {"role": "assistant", "content": "Here's a Python function:\n\n```python\ndef factorial(n):\n    if n <= 1:\n        return 1\n    return n * factorial(n-1)\n```", "type": "text"}
     ]))
-    
-    # Example 3: Image generation
-    # examples.append(create_image_generation_sample(
-    #     prompt="A beautiful sunset over the ocean",
-    #     target_image_path="path/to/target_image.jpg",
-    #     system_prompt="You are an AI image generator."
-    # ))
     
     # Save examples
     with open("example_train_data.jsonl", 'w', encoding='utf-8') as f:
         for example in examples:
             f.write(json.dumps(example, ensure_ascii=False) + '\n')
     
-    print("Created example_train_data.jsonl with sample data")
+    print("Created example_train_data.jsonl with text-only sample data")
+    print("\nNote: For image generation data, use prepare_image_gen_data.py")
 
 
 if __name__ == "__main__":
