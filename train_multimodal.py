@@ -44,7 +44,7 @@ import deepspeed
 
 import transformers
 from torch.utils.data import Dataset
-from transformers import Trainer, TrainerCallback
+from transformers import Trainer, TrainerCallback, BitsAndBytesConfig
 from peft import LoraConfig, get_peft_model
 from transformers.trainer_utils import PREFIX_CHECKPOINT_DIR
 from PIL import Image
@@ -252,6 +252,40 @@ class ModelArguments:
     moe_drop_tokens: bool = field(
         default=True,
         metadata={"help": "Enable token dropping in MoE layers to stabilize VRAM usage during training."}
+    )
+    
+    # QLoRA / Quantization arguments
+    use_qlora: bool = field(
+        default=False,
+        metadata={"help": "Enable QLoRA (quantized LoRA) for memory-efficient training."}
+    )
+    load_in_4bit: bool = field(
+        default=False,
+        metadata={"help": "Load model in 4-bit precision (requires use_qlora=True)."}
+    )
+    load_in_8bit: bool = field(
+        default=False,
+        metadata={"help": "Load model in 8-bit precision (requires use_qlora=True)."}
+    )
+    bnb_4bit_compute_dtype: str = field(
+        default="bfloat16",
+        metadata={"help": "Compute dtype for 4-bit base models. Options: bfloat16, float16, float32"}
+    )
+    bnb_4bit_quant_type: str = field(
+        default="nf4",
+        metadata={"help": "Quantization type for 4-bit. Options: fp4, nf4"}
+    )
+    bnb_4bit_use_double_quant: bool = field(
+        default=True,
+        metadata={"help": "Use nested quantization for 4-bit (reduces memory further)."}
+    )
+    llm_int8_threshold: float = field(
+        default=6.0,
+        metadata={"help": "Outlier threshold for 8-bit quantization."}
+    )
+    llm_int8_enable_fp32_cpu_offload: bool = field(
+        default=False,
+        metadata={"help": "Enable FP32 CPU offload for 8-bit quantization."}
     )
 
 
@@ -592,7 +626,58 @@ def train():
     
     if model_args.use_flash_attn:
         init_kwargs["attn_implementation"] = "flash_attention_2"
-
+    
+    # Configure quantization for QLoRA
+    if model_args.use_qlora:
+        if not model_args.use_lora:
+            raise ValueError("QLoRA requires use_lora=True")
+        
+        if model_args.load_in_4bit and model_args.load_in_8bit:
+            raise ValueError("Cannot use both load_in_4bit and load_in_8bit")
+        
+        if not (model_args.load_in_4bit or model_args.load_in_8bit):
+            raise ValueError("QLoRA requires either load_in_4bit=True or load_in_8bit=True")
+        
+        # Modules to skip during quantization
+        skip_modules = [
+            "vae",
+            "vision_model",
+            "vision_aligner",
+            "patch_embed",
+            "timestep_emb",
+            "time_embed",
+            "time_embed_2",
+            "final_layer",
+            "lm_head",
+        ]
+        
+        if model_args.load_in_4bit:
+            logger.info("Loading model in 4-bit for QLoRA training")
+            compute_dtype_map = {
+                "bfloat16": torch.bfloat16,
+                "float16": torch.float16,
+                "float32": torch.float32,
+            }
+            compute_dtype = compute_dtype_map.get(model_args.bnb_4bit_compute_dtype, torch.bfloat16)
+            
+            quant_config = BitsAndBytesConfig(
+                load_in_4bit=True,
+                bnb_4bit_compute_dtype=compute_dtype,
+                bnb_4bit_quant_type=model_args.bnb_4bit_quant_type,
+                bnb_4bit_use_double_quant=model_args.bnb_4bit_use_double_quant,
+                llm_int8_skip_modules=skip_modules,
+            )
+        else:  # load_in_8bit
+            logger.info("Loading model in 8-bit for QLoRA training")
+            quant_config = BitsAndBytesConfig(
+                load_in_8bit=True,
+                llm_int8_threshold=model_args.llm_int8_threshold,
+                llm_int8_skip_modules=skip_modules,
+                llm_int8_enable_fp32_cpu_offload=model_args.llm_int8_enable_fp32_cpu_offload,
+            )
+        
+        init_kwargs["quantization_config"] = quant_config
+    
     if training_args.bf16:
         init_kwargs["torch_dtype"] = torch.bfloat16
     elif training_args.fp16:

@@ -69,7 +69,8 @@ This repo is developed and maintained by Pixo team (official@pixo.video). For in
 
 ## 📰 News
 
-- **[2025-12]** Initial release of HunyuanImage-3.0 training scripts
+- **[2025-12-24]** Added QLoRA support for memory-efficient single-GPU training (4-bit/8-bit quantization)
+- **[2025-12-05]** Initial release of HunyuanImage-3.0 training scripts
 
 
 ## 🔍 Overview
@@ -85,7 +86,9 @@ The training framework supports two training modes:
 
 ## 💻 System Requirements
 
-Below are the minimum hardware requirements for training HunyuanImage-3.0 with **LoRA** when the base model is loaded in **bf16** precision:
+### LoRA Training
+
+Minimum hardware requirements for training HunyuanImage-3.0 with **LoRA** when the base model is loaded in **bf16** precision:
 
 | Training Mode | Image Size | Minimum VRAM |
 |---------------|------------|--------------|
@@ -95,7 +98,39 @@ Below are the minimum hardware requirements for training HunyuanImage-3.0 with *
 | Image Generation | 768×768 | ≥ 6 × 80GB |
 | Image Generation | 1024×1024 | ≥ 8 × 80GB |
 
-> **Note:** Full model training requires significantly more VRAM.
+### QLoRA Training (Quantized)
+
+For memory-efficient training with **QLoRA**, you can train on a single GPU with quantization:
+
+**8-bit Quantization:**
+| Training Mode | Image Size | GPU | MoE Drop Tokens |
+|---------------|------------|-----|-----------------|
+| Image Generation | 256×256 | 1 × H100 NVL (94GB) | ✓ Required |
+| Image Generation | 256×256 | 1 × H200 (141GB) | Optional |
+| Image Generation | 512×512 | 1 × H200 (141GB) | ✓ Required |
+| Image Generation | 768×768 | 1 × H200 (141GB) | ✓ Required |
+| Image Generation | 1024×1024 | 1 × B200 (180GB) | ✓ Required |
+
+**4-bit Quantization:**
+| Training Mode | Image Size | GPU | MoE Drop Tokens |
+|---------------|------------|-----|-----------------|
+| Image Generation | 256×256 | 1 × A100 (80GB) | Optional |
+| Image Generation | 512×512 | 1 × A100 (80GB) | ✓ Required |
+| Image Generation | 768×768 | 1 × H100 NVL (94GB) | ✓ Required |
+| Image Generation | 768×768 | 1 × H200 (141GB) | Optional |
+| Image Generation | 1024×1024 | 1 × H200 (141GB) | ✓ Required |
+
+> [!NOTE]
+> The VRAM requirements listed above are based on testing with **batch size 1** and **short prompts** (< 50 tokens). Long and detailed prompts or larger batch sizes may require additional VRAM. Consider using larger GPUs or enabling `moe_drop_tokens` if you encounter OOM errors.
+
+> [!TIP]
+> **QLoRA Benefits:**
+> - Single-GPU training by loading base model in 4-bit or 8-bit precision
+> - Enable `moe_drop_tokens` for additional memory savings at larger resolutions
+> - Use `train_image_qlora.sh` as a starting configuration template
+
+> [!IMPORTANT]
+> Full model training (without LoRA/QLoRA) requires significantly more VRAM and is not covered in the examples above.
 
 
 ## 🚀 Quick Start
@@ -169,6 +204,18 @@ Configuration highlights:
 TRAIN_IMAGE_GENERATION=true
 IMAGE_BASE_SIZE=512
 IMAGE_RATIO="1:1"
+```
+
+**`train_image_qlora.sh`**
+- Memory-efficient single-GPU training script for image generation
+- Uses QLoRA (quantized LoRA) with 4-bit or 8-bit precision
+
+Configuration highlights:
+```bash
+USE_QLORA=true
+LOAD_IN_4BIT=true  # or LOAD_IN_8BIT=true
+MOE_DROP_TOKENS=false
+IMAGE_BASE_SIZE=256
 ```
 
 **`train_slurm.sh` / `train_image_slurm.sh`**
@@ -371,6 +418,26 @@ USE_LORA=true
 LORA_RANK=64        # Higher rank = more parameters
 LORA_ALPHA=128      # Scaling factor
 LORA_DROPOUT=0.05   # Dropout rate
+```
+
+### QLoRA Configuration
+
+Enable memory-efficient training on a single GPU with quantization:
+
+```bash
+# Enable QLoRA
+USE_QLORA=true
+USE_LORA=true
+
+# Choose quantization precision (use one)
+LOAD_IN_4BIT=true
+LOAD_IN_8BIT=false
+
+# Optional: Enable for additional memory savings
+MOE_DROP_TOKENS=false
+
+# Use memory-efficient optimizer
+--optim "paged_adamw_8bit"
 ```
 
 ## 💡 Training Tips
