@@ -69,7 +69,7 @@ export TRAIN_VISION_MODEL=false  # Whether to train ViT encoder
 export TRAIN_VAE=false          # Whether to train VAE decoder
 
 # DeepSpeed config (relative to train directory)
-export DS_CONFIG="./ds_zero3_no_offload.json"
+export DS_CONFIG="./configs/ds_zero3_no_offload.json"
 
 # Create output directory
 mkdir -p $OUTPUT_DIR
