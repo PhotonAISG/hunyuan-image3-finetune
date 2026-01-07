@@ -699,7 +699,13 @@ class MultiModalDataset(Dataset):
                 raise
         
         # Load and encode on-the-fly
-        raw_image = Image.open(image_path).convert('RGB')
+        raw_image = Image.open(image_path)
+        if raw_image.mode in ('RGBA', 'LA', 'P'):
+            # Palette or images with alpha channel - convert through RGBA
+            raw_image = raw_image.convert('RGBA').convert('RGB')
+        else:
+            raw_image = raw_image.convert('RGB')
+        
         vae_image_info = self._raw_image_preprocess(raw_image, self.image_ratio)
         
         _, vae_latent = self.model.vae_encode(

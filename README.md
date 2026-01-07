@@ -64,6 +64,7 @@ This repo is developed and maintained by Pixo team (official@pixo.video). For in
 |-------|-------------|------|
 | HunyuanImage-3.0-Naruto-Style-Adapter | **Naruto** anime style | [🤗 HuggingFace](https://huggingface.co/pixosg/HunyuanImage-3.0-Naruto-Style-Adapter) |
 | HunyuanImage-3.0-Nezha-Style-Adapter | **Nezha** anime style | [🤗 HuggingFace](https://huggingface.co/pixosg/HunyuanImage-3.0-Nezha-Style-Adapter) |
+| HunyuanImage-3.0-Pixelart-Style-Adapter | **Pixel Art** style | [🤗 HuggingFace](https://huggingface.co/pixosg/HunyuanImage-3.0-Pixelart-Style-Adapter) |
 
 > Have a trained LoRA to share? Open a PR to add it here!
 
