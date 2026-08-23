@@ -41,8 +41,7 @@
       <a class="opt" href="#data">Data</a>
       <a class="ghbtn" href="https://github.com/PhotonAISG/hunyuan-image3-finetune">
         <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.4 7.4 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg>
-        Star
-        <span class="cnt">GitHub</span>
+        GitHub
       </a>
     </nav>
   </div>
@@ -90,7 +89,7 @@
 <!-- ================= FEATURES ================= -->
 <section class="section section--alt" id="features">
   <div class="wrap">
-    <div class="shead shead--center">
+    <div class="shead">
       <div class="kicker">Features</div>
       <h2>Everything needed to train an 80B MoE</h2>
       <p>Data prep, latent caching, distributed training and quantized single-GPU runs — no glue code required.</p>
@@ -173,32 +172,32 @@
       <p>Base model weights come from the <a href="https://github.com/Tencent-Hunyuan/HunyuanImage-3.0">official repository</a>; everything else is here.</p>
     </div>
 
-    <div class="split">
+    <div class="split split--center">
       <div class="steps">
         <div class="step">
           <div class="step__n">1</div>
-          <div>
+          <div class="step__body">
             <h3>Install</h3>
             <p>Clone the repo, install dependencies, and download the HunyuanImage-3.0 weights.</p>
           </div>
         </div>
         <div class="step">
           <div class="step__n">2</div>
-          <div>
+          <div class="step__body">
             <h3>Build your dataset</h3>
             <p>Convert an image directory plus a <code>file_name,text</code> CSV into training JSONL.</p>
           </div>
         </div>
         <div class="step">
           <div class="step__n">3</div>
-          <div>
+          <div class="step__body">
             <h3>Cache latents <span class="soft">optional</span></h3>
             <p>Pre-encode images to <code>.pt</code> latents; they're picked up automatically at train time.</p>
           </div>
         </div>
         <div class="step">
           <div class="step__n">4</div>
-          <div>
+          <div class="step__body">
             <h3>Train</h3>
             <p>Set your paths at the top of a launcher script and run it.</p>
           </div>
@@ -206,7 +205,7 @@
       </div>
 
       <div>
-        <div class="code" style="margin-top:0">
+        <div class="code code--flush">
           <div class="code__bar"><span class="code__name">setup.sh</span><button class="copy" type="button">Copy</button></div>
 <pre><code><span class="t-c"># 1 — install</span>
 <span class="t-p">$</span> git clone https://github.com/PhotonAISG/hunyuan-image3-finetune.git
@@ -235,8 +234,9 @@
       </div>
     </div>
 
-    <div class="shead" style="margin:44px 0 16px">
-      <h2 style="font-size:20px">Pick a launcher</h2>
+    <div class="shead shead--sm shead--gap">
+      <div class="kicker">Launchers</div>
+      <h2>Pick a script</h2>
     </div>
     <div class="table-wrap">
       <div class="table-scroll">
@@ -329,8 +329,8 @@
       <p>Straight out of the launcher scripts — edit in place, no config framework.</p>
     </div>
 
-    <div class="split">
-      <div class="code" style="margin-top:0">
+    <div class="split split--stretch">
+      <div class="code code--flush">
         <div class="code__bar"><span class="code__name">train_image.sh</span><button class="copy" type="button">Copy</button></div>
 <pre><code><span class="t-v">TRAIN_IMAGE_GENERATION</span>=<span class="t-s">true</span>
 <span class="t-v">IMAGE_BASE_SIZE</span>=<span class="t-n">512</span>
@@ -350,7 +350,7 @@
 <span class="t-k">--mode_scale</span> <span class="t-n">1.29</span></code></pre>
       </div>
 
-      <div class="code" style="margin-top:0">
+      <div class="code code--flush">
         <div class="code__bar"><span class="code__name">train_image_qlora.sh</span><button class="copy" type="button">Copy</button></div>
 <pre><code><span class="t-v">USE_QLORA</span>=<span class="t-s">true</span>
 <span class="t-v">USE_LORA</span>=<span class="t-s">true</span>
@@ -386,7 +386,7 @@
     </div>
 
     <div class="panel" id="p-text" role="tabpanel" aria-labelledby="tab-text" tabindex="0">
-      <div class="code" style="margin-top:0">
+      <div class="code code--flush">
         <div class="code__bar"><span class="code__name">train.jsonl</span><button class="copy" type="button">Copy</button></div>
 <pre><code>{
   <span class="t-d">"type"</span>: <span class="t-s">"text_only"</span>,
@@ -401,7 +401,7 @@
     </div>
 
     <div class="panel" id="p-inst" role="tabpanel" aria-labelledby="tab-inst" tabindex="0" hidden>
-      <div class="code" style="margin-top:0">
+      <div class="code code--flush">
         <div class="code__bar"><span class="code__name">image_train.jsonl</span><button class="copy" type="button">Copy</button></div>
 <pre><code>{
   <span class="t-d">"type"</span>: <span class="t-s">"image_generation"</span>,
@@ -417,7 +417,7 @@
     </div>
 
     <div class="panel" id="p-pre" role="tabpanel" aria-labelledby="tab-pre" tabindex="0" hidden>
-      <div class="code" style="margin-top:0">
+      <div class="code code--flush">
         <div class="code__bar"><span class="code__name">pretrain.jsonl</span><button class="copy" type="button">Copy</button></div>
 <pre><code>{
   <span class="t-d">"type"</span>: <span class="t-s">"image_generation"</span>,
@@ -436,9 +436,11 @@
 <section class="section section--alt" id="repo">
   <div class="wrap split">
     <div>
-      <div class="kicker">Repository</div>
-      <h2 style="font-size:22px;margin-bottom:16px">What's in the box</h2>
-      <div class="code" style="margin-top:0">
+      <div class="shead shead--sm">
+        <div class="kicker">Repository</div>
+        <h2>What's in the box</h2>
+      </div>
+      <div class="code code--flush">
         <div class="code__bar"><span class="code__name">tree</span></div>
 <pre><code><span class="t-d">hunyuan-image3-finetune/</span>
 ├── train_multimodal.py       <span class="t-c"># trainer (text + image losses)</span>
@@ -455,8 +457,10 @@
     </div>
 
     <div>
-      <div class="kicker">Tips</div>
-      <h2 style="font-size:22px;margin-bottom:16px">Things that save a run</h2>
+      <div class="shead shead--sm">
+        <div class="kicker">Tips</div>
+        <h2>Things that save a run</h2>
+      </div>
       <ul class="ticks">
         <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m4 12.5 5 5 11-11"/></svg><span><b>Start small.</b> Validate the loop on a handful of examples before booking a cluster.</span></li>
         <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m4 12.5 5 5 11-11"/></svg><span><b>Cache latents.</b> For any serious image run, pre-encode first.</span></li>
@@ -472,7 +476,7 @@
 <!-- ================= ARCHITECTURE ================= -->
 <section class="section" id="model">
   <div class="wrap">
-    <div class="shead shead--center">
+    <div class="shead">
       <div class="kicker">The base model</div>
       <h2>HunyuanImage-3.0 in one diagram</h2>
       <p>A unified autoregressive backbone emitting both text and image tokens, with a VAE decoding generated latents back to pixels.</p>
@@ -515,7 +519,7 @@
       <h2>Using this in research?</h2>
       <p>Cite the repository, and the HunyuanImage-3.0 technical report for the model itself.</p>
     </div>
-    <div class="code" style="margin-top:0">
+    <div class="code code--flush">
       <div class="code__bar"><span class="code__name">BibTeX</span><button class="copy" type="button">Copy</button></div>
 <pre><code>@misc{hunyuanimage3finetune,
   author       = {Yang Zhang, Wenzhong Liang, Yanfei Dong},

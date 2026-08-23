@@ -168,21 +168,19 @@ code, pre, kbd { font-family: var(--mono); }
 .btn--ghost { background: #fff; color: var(--ink); border-color: var(--border-2); }
 .btn--ghost:hover { background: var(--surface); }
 
-/* terminal one-liner */
-.term {
-  margin: 28px auto 0; max-width: 620px;
+/* terminal one-liner — .code.term outranks the .code margin defined below */
+.code.term {
+  margin: 28px auto 0; max-width: 740px; width: fit-content;
   display: flex; align-items: center; gap: 12px;
   background: var(--code-bg); border-radius: 10px;
-  padding: 12px 12px 12px 16px; text-align: left;
+  padding: 11px 11px 11px 16px; text-align: left;
   box-shadow: 0 12px 34px -20px rgba(13,17,23,.65);
 }
 .term code {
   /* reset the inline-code chip styling — this sits on a dark bar */
   background: none; border: 0; padding: 0; border-radius: 0;
-  font-size: 13.5px; color: var(--code-text); overflow-x: auto; white-space: nowrap;
-  flex: 1; scrollbar-width: none;
-  -webkit-mask-image: linear-gradient(90deg, #000 92%, transparent 100%);
-  mask-image: linear-gradient(90deg, #000 92%, transparent 100%);
+  font-size: 13.5px; line-height: 1.5; color: var(--code-text);
+  overflow-x: auto; white-space: nowrap; scrollbar-width: none;
 }
 .term code::-webkit-scrollbar { display: none; }
 .term .dollar { color: #6f7a95; user-select: none; margin-right: 8px; }
@@ -207,6 +205,9 @@ code, pre, kbd { font-family: var(--mono); }
 }
 .shead h2 { font-size: clamp(25px, 3vw, 32px); }
 .shead p { margin-top: 11px; font-size: 17px; color: var(--muted); }
+.shead--sm { margin-bottom: 18px; }
+.shead--sm h2 { font-size: 21px; }
+.shead--gap { margin-top: 44px; }
 
 /* ---------------- feature grid ---------------- */
 .grid { display: grid; gap: 14px; }
@@ -299,6 +300,8 @@ td.num { font-family: var(--mono); font-size: 13px; color: var(--ink); white-spa
   background: var(--code-bg); border-radius: var(--r-s); overflow: hidden;
   margin: 14px 0 0;
 }
+/* first code block in a column — no leading gap */
+.code--flush { margin-top: 0; }
 .code__bar {
   display: flex; align-items: center; gap: 10px;
   padding: 9px 12px; border-bottom: 1px solid var(--code-line);
@@ -330,14 +333,15 @@ td.num { font-family: var(--mono); font-size: 13px; color: var(--ink); white-spa
 /* ---------------- steps ---------------- */
 .steps { display: grid; gap: 0; }
 .step {
-  display: grid; grid-template-columns: 30px 1fr; gap: 18px;
-  padding: 0 0 26px; position: relative;
+  display: grid; grid-template-columns: 30px 1fr; gap: 16px;
+  padding: 0 0 24px; position: relative;
 }
 .step:last-child { padding-bottom: 0; }
 .step::after {
-  content: ""; position: absolute; left: 15px; top: 34px; bottom: 6px; width: 1px;
+  content: ""; position: absolute; left: 15px; top: 36px; bottom: 4px; width: 1px;
   background: var(--border);
 }
+.step__body { padding-top: 3px; }
 .step:last-child::after { display: none; }
 .step__n {
   width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center;
@@ -365,7 +369,14 @@ td.num { font-family: var(--mono); font-size: 13px; color: var(--ink); white-spa
 
 /* ---------------- split / lists ---------------- */
 .split { display: grid; grid-template-columns: 1fr 1fr; gap: 26px; align-items: start; }
-@media (max-width: 900px) { .split { grid-template-columns: 1fr; } }
+/* rail sits centred against the tall code block beside it */
+.split--center { align-items: center; }
+/* side-by-side code blocks match heights instead of ending ragged */
+.split--stretch { align-items: stretch; }
+@media (max-width: 900px) {
+  .split { grid-template-columns: 1fr; }
+  .split--center, .split--stretch { align-items: start; }
+}
 
 .ticks { margin: 0; padding: 0; list-style: none; display: grid; gap: 11px; }
 .ticks li {
