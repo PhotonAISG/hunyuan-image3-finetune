@@ -4,6 +4,9 @@
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
 [![GitHub stars](https://img.shields.io/github/stars/PhotonAISG/hunyuan-image3-finetune.svg?style=social&label=Star)](https://github.com/PhotonAISG/hunyuan-image3-finetune)
 [![GitHub forks](https://img.shields.io/github/forks/PhotonAISG/hunyuan-image3-finetune.svg?style=social&label=Fork)](https://github.com/PhotonAISG/hunyuan-image3-finetune/fork)
+[![Project page](https://img.shields.io/badge/project_page-photonaisg.github.io-5b4bf5.svg)](https://photonaisg.github.io/hunyuan-image3-finetune/)
+
+📖 **Project page: [photonaisg.github.io/hunyuan-image3-finetune](https://photonaisg.github.io/hunyuan-image3-finetune/)** — quick start, hardware requirements, data formats and the released adapters, in a browsable form.
 
 This repository contains training scripts for fine-tuning HunyuanImage-3.0 models. Designed to work with the official model at: https://github.com/Tencent-Hunyuan/HunyuanImage-3.0.git
 
@@ -44,6 +47,7 @@ Unified vision-language models capable of both understanding and generation are 
         <li><a href="#-advanced-features">Advanced Features</a></li>
         <li><a href="#-example-workflows">Example Workflows</a></li>
         <li><a href="#%EF%B8%8F-known-issues">Known Issues</a></li>
+        <li><a href="#-about-pixo">About Pixo</a></li>
         <li><a href="#-license">License</a></li>
         <li><a href="#-citation">Citation</a></li>
         <li><a href="#-acknowledgment">Acknowledgment</a></li>
@@ -51,7 +55,7 @@ Unified vision-language models capable of both understanding and generation are 
 </details>
 
 ## 👥 Contributors
-This repo is developed and maintained by Pixo team (official@pixo.video). For inqueries, you can also reach out to yangzhang@u.nus.edu.
+This repo is developed and maintained by the [Pixo](https://pixo.video) team — see [About Pixo](#-about-pixo). For inquiries, write to [official@pixo.video](mailto:official@pixo.video), or reach out to [yangzhang@u.nus.edu](mailto:yangzhang@u.nus.edu).
 
 <a href="https://github.com/PhotonAISG/hunyuan-image3-finetune/graphs/contributors">
   <img src="https://contrib.rocks/image?repo=PhotonAISG/hunyuan-image3-finetune" />
@@ -578,6 +582,19 @@ There is a bug in the official HunyuanImage-3.0 repository's `tokenizer_wrapper.
 5. In the else branch (user role), remove the prefix/suffix wrapping
 
 > **Note:** This fix is already applied in this repository's version of `tokenizer_wrapper.py`.
+
+## 🏢 About Pixo
+
+This project is built and maintained by **[Pixo](https://pixo.video)**, an AI video creation platform operated by Pensieve Pte. Ltd.
+
+Pixo works as a personal AI director. Conversational agents carry a project from research and scripting through storyboards, asset generation and editing, orchestrating leading video models — Seedance, Veo, Kling and others — inside a single collaborative workspace. It is used by YouTube creators, marketers, musicians, educators and podcasters, along with teams producing training material and product demos, and supports multi-user editing, inline comments, and episodic series that hold characters and styles consistent across episodes.
+
+Generative image and video models are the core of that pipeline, and adapting them to a specific look is routine work for us. HunyuanImage-3.0 is the strongest open unified model available today, but it shipped without training code — so we wrote our own, used it to train the [style adapters](#-trained-loras) above, and released both to the community.
+
+- 🌐 Website — [pixo.video](https://pixo.video)
+- 🤗 Hugging Face — [pixosg](https://huggingface.co/pixosg)
+- 💻 GitHub — [PhotonAISG](https://github.com/PhotonAISG)
+- ✉️ Contact — [official@pixo.video](mailto:official@pixo.video)
 
 ## 📝 License
 
