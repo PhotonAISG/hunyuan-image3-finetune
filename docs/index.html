@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>hunyuan-image3-finetune — training scripts for HunyuanImage-3.0</title>
+<meta name="description" content="Open training pipeline for HunyuanImage-3.0, the largest open-source unified vision-language model (80B MoE). LoRA, QLoRA and full fine-tuning on Hugging Face Trainer, DeepSpeed and PEFT — single GPU to multi-node Slurm.">
+<link rel="canonical" href="https://photonaisg.github.io/hunyuan-image3-finetune/">
+
+<meta property="og:type" content="website">
+<meta property="og:title" content="hunyuan-image3-finetune">
+<meta property="og:description" content="Train and fine-tune HunyuanImage-3.0 — LoRA, QLoRA, single GPU to multi-node Slurm.">
+<meta property="og:url" content="https://photonaisg.github.io/hunyuan-image3-finetune/">
+<meta property="og:image" content="https://photonaisg.github.io/hunyuan-image3-finetune/assets/hunyuan_overview.png">
+<meta name="twitter:card" content="summary_large_image">
+
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%236f5efc'/%3E%3Cstop offset='1' stop-color='%232f21c9'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='32' height='32' rx='8' fill='url(%23g)'/%3E%3Cpath d='M10 21V11m12 10V11m-12 5h12' stroke='%23fff' stroke-width='2.6' stroke-linecap='round'/%3E%3C/svg%3E">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="nav" id="nav">
+  <div class="wrap nav__inner">
+    <a class="brand" href="#top">
+      <span class="mark" aria-hidden="true">
+        <svg viewBox="0 0 24 24"><path d="M8 18V6m8 12V6M8 12h8"/></svg>
+      </span>
+      <span class="brand__name">hunyuan-image3-finetune</span>
+    </a>
+    <nav class="nav__links" aria-label="Primary">
+      <a class="opt" href="#features">Features</a>
+      <a class="opt" href="#models">Models</a>
+      <a class="opt" href="#requirements">Requirements</a>
+      <a class="opt" href="#quickstart">Quick start</a>
+      <a class="opt" href="#data">Data</a>
+      <a class="ghbtn" href="https://github.com/PhotonAISG/hunyuan-image3-finetune">
+        <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.4 7.4 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg>
+        Star
+        <span class="cnt">GitHub</span>
+      </a>
+    </nav>
+  </div>
+</header>
+
+<main id="main">
+<a id="top"></a>
+
+<!-- ================= HERO ================= -->
+<section class="hero">
+  <div class="wrap">
+    <a class="tagpill" href="#quickstart">
+      <span class="new">New</span> QLoRA — fine-tune an 80B model on one GPU
+    </a>
+
+    <h1>Training scripts for <span class="hl">HunyuanImage-3.0</span></h1>
+    <p class="hero__sub">
+      The official release ships inference only. This repo is the training half: LoRA, QLoRA and full
+      fine-tuning for text-to-image generation and text SFT, on Hugging Face Trainer + DeepSpeed + PEFT.
+    </p>
+
+    <div class="cta">
+      <a class="btn btn--primary" href="#quickstart">Quick start</a>
+      <a class="btn btn--ghost" href="https://github.com/PhotonAISG/hunyuan-image3-finetune">
+        <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.4 7.4 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg>
+        View on GitHub
+      </a>
+    </div>
+
+    <div class="code term">
+      <span class="dollar" aria-hidden="true">$</span>
+      <code><span class="cmd-a">git clone</span> https://github.com/PhotonAISG/hunyuan-image3-finetune.git</code>
+      <button class="copy" type="button" data-copy="git clone https://github.com/PhotonAISG/hunyuan-image3-finetune.git">Copy</button>
+    </div>
+
+    <div class="badges">
+      <a href="https://www.gnu.org/licenses/agpl-3.0"><img src="https://img.shields.io/badge/License-AGPL_v3-5b4bf5.svg" alt="License: AGPL v3" width="99" height="20" loading="lazy"></a>
+      <a href="https://www.python.org/downloads/"><img src="https://img.shields.io/badge/python-3.10+-4534e8.svg" alt="Python 3.10+" width="93" height="20" loading="lazy"></a>
+      <a href="https://github.com/PhotonAISG/hunyuan-image3-finetune"><img src="https://img.shields.io/github/stars/PhotonAISG/hunyuan-image3-finetune?style=flat&color=444b57" alt="GitHub stars" width="80" height="20" loading="lazy"></a>
+      <a href="https://github.com/PhotonAISG/hunyuan-image3-finetune/fork"><img src="https://img.shields.io/github/forks/PhotonAISG/hunyuan-image3-finetune?style=flat&color=444b57" alt="GitHub forks" width="80" height="20" loading="lazy"></a>
+    </div>
+  </div>
+</section>
+
+<!-- ================= FEATURES ================= -->
+<section class="section section--alt" id="features">
+  <div class="wrap">
+    <div class="shead shead--center">
+      <div class="kicker">Features</div>
+      <h2>Everything needed to train an 80B MoE</h2>
+      <p>Data prep, latent caching, distributed training and quantized single-GPU runs — no glue code required.</p>
+    </div>
+
+    <div class="grid g3">
+      <div class="card">
+        <div class="card__icon"><svg viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h10"/></svg></div>
+        <h3>Two training modes</h3>
+        <p>Text-only supervised fine-tuning for language modeling, and text-to-image generation trained with flow matching. One flag switches between them.</p>
+      </div>
+      <div class="card">
+        <div class="card__icon"><svg viewBox="0 0 24 24"><path d="m12 3 9 5-9 5-9-5 9-5Z"/><path d="m3 13 9 5 9-5"/></svg></div>
+        <h3>LoRA, QLoRA &amp; full FT</h3>
+        <p>PEFT LoRA with configurable rank, alpha and dropout. QLoRA loads the base model in 4-bit or 8-bit so one H100 or A100 is enough.</p>
+      </div>
+      <div class="card">
+        <div class="card__icon"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="6" rx="1.5"/><rect x="3" y="13" width="18" height="6" rx="1.5"/><path d="M7 8h.01M7 16h.01"/></svg></div>
+        <h3>DeepSpeed ZeRO-3</h3>
+        <p>Ready-made ZeRO-3 configs with and without CPU offload, plus <code>sbatch</code> launchers for multi-node Slurm clusters.</p>
+      </div>
+      <div class="card">
+        <div class="card__icon"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="m4 15 5-5 4 4 3-3 4 4"/></svg></div>
+        <h3>VAE latent caching</h3>
+        <p>Pre-encode images once with <code>preprocess_images.py</code> and drop the VAE out of the training loop entirely.</p>
+      </div>
+      <div class="card">
+        <div class="card__icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 6.5V12l3.5 2"/></svg></div>
+        <h3>Flow-matching control</h3>
+        <p>Pick the timestep weighting scheme — <code>sigma_sqrt</code>, <code>logit_normal</code>, <code>mode</code>, <code>cosmap</code> — and weight text vs. image loss independently.</p>
+      </div>
+      <div class="card">
+        <div class="card__icon"><svg viewBox="0 0 24 24"><path d="M5 19V5a1 1 0 0 1 1-1h8l5 5v10a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1Z"/><path d="M14 4v5h5"/></svg></div>
+        <h3>Data prep included</h3>
+        <p>Turn Alpaca/ShareGPT text, or an image folder plus a captions CSV, into training JSONL with one command.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= MODELS ================= -->
+<section class="section" id="models">
+  <div class="wrap">
+    <div class="shead">
+      <div class="kicker">Trained with this repo</div>
+      <h2>Style adapters on Hugging Face</h2>
+      <p>Drop-in LoRA weights produced with the exact scripts in this repository.</p>
+    </div>
+
+    <div class="grid g3">
+      <a class="model" href="https://huggingface.co/pixosg/HunyuanImage-3.0-Naruto-Style-Adapter">
+        <div class="model__top"><span class="model__hf">🤗</span><span class="model__tag">LoRA</span></div>
+        <h3>Naruto Style Adapter</h3>
+        <p>Shōnen anime look — bold linework, flat cel shading.</p>
+        <div class="model__id">pixosg/HunyuanImage-3.0-Naruto-Style-Adapter</div>
+      </a>
+      <a class="model" href="https://huggingface.co/pixosg/HunyuanImage-3.0-Nezha-Style-Adapter">
+        <div class="model__top"><span class="model__hf">🤗</span><span class="model__tag">LoRA</span></div>
+        <h3>Nezha Style Adapter</h3>
+        <p>Chinese animated-feature styling, character design and palette.</p>
+        <div class="model__id">pixosg/HunyuanImage-3.0-Nezha-Style-Adapter</div>
+      </a>
+      <a class="model" href="https://huggingface.co/pixosg/HunyuanImage-3.0-Pixelart-Style-Adapter">
+        <div class="model__top"><span class="model__hf">🤗</span><span class="model__tag">LoRA</span></div>
+        <h3>Pixel Art Style Adapter</h3>
+        <p>Low-resolution sprite art with a constrained palette.</p>
+        <div class="model__id">pixosg/HunyuanImage-3.0-Pixelart-Style-Adapter</div>
+      </a>
+    </div>
+    <p class="note">Trained one worth sharing? <a href="https://github.com/PhotonAISG/hunyuan-image3-finetune/pulls">Open a PR</a> and we'll list it here.</p>
+  </div>
+</section>
+
+<!-- ================= QUICK START ================= -->
+<section class="section section--alt" id="quickstart">
+  <div class="wrap">
+    <div class="shead">
+      <div class="kicker">Quick start</div>
+      <h2>From images to a trained adapter</h2>
+      <p>Base model weights come from the <a href="https://github.com/Tencent-Hunyuan/HunyuanImage-3.0">official repository</a>; everything else is here.</p>
+    </div>
+
+    <div class="split">
+      <div class="steps">
+        <div class="step">
+          <div class="step__n">1</div>
+          <div>
+            <h3>Install</h3>
+            <p>Clone the repo, install dependencies, and download the HunyuanImage-3.0 weights.</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step__n">2</div>
+          <div>
+            <h3>Build your dataset</h3>
+            <p>Convert an image directory plus a <code>file_name,text</code> CSV into training JSONL.</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step__n">3</div>
+          <div>
+            <h3>Cache latents <span class="soft">optional</span></h3>
+            <p>Pre-encode images to <code>.pt</code> latents; they're picked up automatically at train time.</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step__n">4</div>
+          <div>
+            <h3>Train</h3>
+            <p>Set your paths at the top of a launcher script and run it.</p>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div class="code" style="margin-top:0">
+          <div class="code__bar"><span class="code__name">setup.sh</span><button class="copy" type="button">Copy</button></div>
+<pre><code><span class="t-c"># 1 — install</span>
+<span class="t-p">$</span> git clone https://github.com/PhotonAISG/hunyuan-image3-finetune.git
+<span class="t-p">$</span> cd hunyuan-image3-finetune
+<span class="t-p">$</span> pip install -r requirements.txt
+
+<span class="t-c"># 2 — images + captions.csv -> train.jsonl</span>
+<span class="t-p">$</span> python prepare_image_gen_data.py \
+    <span class="t-k">--image_dir</span> ./my_dataset/images \
+    <span class="t-k">--captions_file</span> ./my_dataset/captions.csv \
+    <span class="t-k">--output_file</span> train.jsonl \
+    <span class="t-k">--style</span> instruct
+
+<span class="t-c"># 3 — pre-encode VAE latents (optional)</span>
+<span class="t-p">$</span> python preprocess_images.py \
+    <span class="t-k">--model_name_or_path</span> /path/to/HunyuanImage-3 \
+    <span class="t-k">--train_data_file</span> train.jsonl \
+    <span class="t-k">--output_dir</span> cached_latents \
+    <span class="t-k">--image_root_dir</span> ./my_dataset/images \
+    <span class="t-k">--image_base_size</span> <span class="t-n">1024</span> \
+    <span class="t-k">--image_ratio</span> <span class="t-s">"1:1"</span>
+
+<span class="t-c"># 4 — train</span>
+<span class="t-p">$</span> bash train_image.sh</code></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="shead" style="margin:44px 0 16px">
+      <h2 style="font-size:20px">Pick a launcher</h2>
+    </div>
+    <div class="table-wrap">
+      <div class="table-scroll">
+        <table>
+          <thead><tr><th scope="col">Script</th><th scope="col">What it does</th><th scope="col">Run with</th></tr></thead>
+          <tbody>
+            <tr><td class="num">train.sh</td><td>Text-only supervised fine-tuning (LoRA, multi-GPU DeepSpeed)</td><td class="num">bash</td></tr>
+            <tr><td class="num">train_image.sh</td><td>Text-to-image generation training</td><td class="num">bash</td></tr>
+            <tr><td class="num">train_image_qlora.sh</td><td>Single-GPU image training, 4-bit / 8-bit quantized</td><td class="num">bash</td></tr>
+            <tr><td class="num">train_slurm.sh</td><td>Text-only training on a Slurm cluster</td><td class="num">sbatch</td></tr>
+            <tr><td class="num">train_image_slurm.sh</td><td>Multi-node image generation training</td><td class="num">sbatch</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= REQUIREMENTS ================= -->
+<section class="section" id="requirements">
+  <div class="wrap">
+    <div class="shead">
+      <div class="kicker">Hardware</div>
+      <h2>What you need to run it</h2>
+      <p>Measured at batch size 1 with short prompts (&lt; 50 tokens). Longer prompts or bigger batches need more headroom — turn on <code>moe_drop_tokens</code> if you hit OOM. Full-model training without LoRA needs considerably more than any row below.</p>
+    </div>
+
+    <div class="tabs" role="tablist" aria-label="Hardware requirements">
+      <button class="tab" id="tab-lora" role="tab" aria-controls="p-lora" aria-selected="true">LoRA · bf16</button>
+      <button class="tab" id="tab-8bit" role="tab" aria-controls="p-8bit" aria-selected="false">QLoRA · 8-bit</button>
+      <button class="tab" id="tab-4bit" role="tab" aria-controls="p-4bit" aria-selected="false">QLoRA · 4-bit</button>
+    </div>
+
+    <div class="panel" id="p-lora" role="tabpanel" aria-labelledby="tab-lora" tabindex="0">
+      <div class="table-wrap"><div class="table-scroll">
+        <table>
+          <caption class="visually-hidden">Minimum VRAM for LoRA training with the base model in bf16</caption>
+          <thead><tr><th scope="col">Training mode</th><th scope="col">Image size</th><th scope="col">Minimum VRAM</th></tr></thead>
+          <tbody>
+            <tr><td>Text-only</td><td class="opt">—</td><td class="num">≥ 3 × 80 GB</td></tr>
+            <tr><td>Image generation</td><td class="num">256 × 256</td><td class="num">≥ 3 × 80 GB</td></tr>
+            <tr><td>Image generation</td><td class="num">512 × 512</td><td class="num">≥ 4 × 80 GB</td></tr>
+            <tr><td>Image generation</td><td class="num">768 × 768</td><td class="num">≥ 6 × 80 GB</td></tr>
+            <tr><td>Image generation</td><td class="num">1024 × 1024</td><td class="num">≥ 8 × 80 GB</td></tr>
+          </tbody>
+        </table>
+      </div></div>
+    </div>
+
+    <div class="panel" id="p-8bit" role="tabpanel" aria-labelledby="tab-8bit" tabindex="0" hidden>
+      <div class="table-wrap"><div class="table-scroll">
+        <table>
+          <caption class="visually-hidden">Single-GPU 8-bit QLoRA image-generation training</caption>
+          <thead><tr><th scope="col">Image size</th><th scope="col">GPU</th><th scope="col">MoE drop tokens</th></tr></thead>
+          <tbody>
+            <tr><td class="num">256 × 256</td><td>1 × H100 NVL (94 GB)</td><td class="yes">Required</td></tr>
+            <tr><td class="num">256 × 256</td><td>1 × H200 (141 GB)</td><td class="opt">Optional</td></tr>
+            <tr><td class="num">512 × 512</td><td>1 × H200 (141 GB)</td><td class="yes">Required</td></tr>
+            <tr><td class="num">768 × 768</td><td>1 × H200 (141 GB)</td><td class="yes">Required</td></tr>
+            <tr><td class="num">1024 × 1024</td><td>1 × B200 (180 GB)</td><td class="yes">Required</td></tr>
+          </tbody>
+        </table>
+      </div></div>
+    </div>
+
+    <div class="panel" id="p-4bit" role="tabpanel" aria-labelledby="tab-4bit" tabindex="0" hidden>
+      <div class="table-wrap"><div class="table-scroll">
+        <table>
+          <caption class="visually-hidden">Single-GPU 4-bit QLoRA image-generation training</caption>
+          <thead><tr><th scope="col">Image size</th><th scope="col">GPU</th><th scope="col">MoE drop tokens</th></tr></thead>
+          <tbody>
+            <tr><td class="num">256 × 256</td><td>1 × A100 (80 GB)</td><td class="opt">Optional</td></tr>
+            <tr><td class="num">512 × 512</td><td>1 × A100 (80 GB)</td><td class="yes">Required</td></tr>
+            <tr><td class="num">768 × 768</td><td>1 × H100 NVL (94 GB)</td><td class="yes">Required</td></tr>
+            <tr><td class="num">768 × 768</td><td>1 × H200 (141 GB)</td><td class="opt">Optional</td></tr>
+            <tr><td class="num">1024 × 1024</td><td>1 × H200 (141 GB)</td><td class="yes">Required</td></tr>
+          </tbody>
+        </table>
+      </div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= CONFIG ================= -->
+<section class="section section--alt" id="config">
+  <div class="wrap">
+    <div class="shead">
+      <div class="kicker">Configuration</div>
+      <h2>Knobs you'll actually turn</h2>
+      <p>Straight out of the launcher scripts — edit in place, no config framework.</p>
+    </div>
+
+    <div class="split">
+      <div class="code" style="margin-top:0">
+        <div class="code__bar"><span class="code__name">train_image.sh</span><button class="copy" type="button">Copy</button></div>
+<pre><code><span class="t-v">TRAIN_IMAGE_GENERATION</span>=<span class="t-s">true</span>
+<span class="t-v">IMAGE_BASE_SIZE</span>=<span class="t-n">512</span>
+<span class="t-v">IMAGE_RATIO</span>=<span class="t-s">"1:1"</span>
+
+<span class="t-v">USE_LORA</span>=<span class="t-s">true</span>
+<span class="t-v">LORA_RANK</span>=<span class="t-n">64</span>          <span class="t-c"># more rank, more capacity</span>
+<span class="t-v">LORA_ALPHA</span>=<span class="t-n">128</span>        <span class="t-c"># scaling factor</span>
+<span class="t-v">LORA_DROPOUT</span>=<span class="t-n">0.05</span>
+
+<span class="t-c"># loss balance + flow-matching weighting</span>
+<span class="t-k">--text_loss_weight</span> <span class="t-n">1.0</span>
+<span class="t-k">--image_gen_loss_weight</span> <span class="t-n">1.0</span>
+<span class="t-k">--weighting_scheme</span> none
+<span class="t-c">#   sigma_sqrt | logit_normal | mode | cosmap | none</span>
+<span class="t-k">--logit_mean</span> <span class="t-n">0.0</span>   <span class="t-k">--logit_std</span> <span class="t-n">1.0</span>
+<span class="t-k">--mode_scale</span> <span class="t-n">1.29</span></code></pre>
+      </div>
+
+      <div class="code" style="margin-top:0">
+        <div class="code__bar"><span class="code__name">train_image_qlora.sh</span><button class="copy" type="button">Copy</button></div>
+<pre><code><span class="t-v">USE_QLORA</span>=<span class="t-s">true</span>
+<span class="t-v">USE_LORA</span>=<span class="t-s">true</span>
+
+<span class="t-c"># pick exactly one quantization width</span>
+<span class="t-v">LOAD_IN_4BIT</span>=<span class="t-s">true</span>
+<span class="t-v">LOAD_IN_8BIT</span>=<span class="t-s">false</span>
+
+<span class="t-c"># extra memory savings at higher resolutions</span>
+<span class="t-v">MOE_DROP_TOKENS</span>=<span class="t-s">false</span>
+<span class="t-v">IMAGE_BASE_SIZE</span>=<span class="t-n">256</span>
+
+<span class="t-c"># memory-efficient optimizer</span>
+<span class="t-k">--optim</span> <span class="t-s">"paged_adamw_8bit"</span></code></pre>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= DATA ================= -->
+<section class="section" id="data">
+  <div class="wrap">
+    <div class="shead">
+      <div class="kicker">Data format</div>
+      <h2>One JSON object per line</h2>
+      <p>Three record types share the same JSONL file format. In <b>instruct</b> style the image tokens follow the assistant's text; in <b>pretrain</b> style they follow the user prompt directly.</p>
+    </div>
+
+    <div class="tabs" role="tablist" aria-label="Data formats">
+      <button class="tab" id="tab-text" role="tab" aria-controls="p-text" aria-selected="true">text_only</button>
+      <button class="tab" id="tab-inst" role="tab" aria-controls="p-inst" aria-selected="false">image_generation · instruct</button>
+      <button class="tab" id="tab-pre"  role="tab" aria-controls="p-pre"  aria-selected="false">image_generation · pretrain</button>
+    </div>
+
+    <div class="panel" id="p-text" role="tabpanel" aria-labelledby="tab-text" tabindex="0">
+      <div class="code" style="margin-top:0">
+        <div class="code__bar"><span class="code__name">train.jsonl</span><button class="copy" type="button">Copy</button></div>
+<pre><code>{
+  <span class="t-d">"type"</span>: <span class="t-s">"text_only"</span>,
+  <span class="t-d">"messages"</span>: [
+    {<span class="t-d">"role"</span>: <span class="t-s">"system"</span>,    <span class="t-d">"content"</span>: <span class="t-s">"You are a helpful assistant."</span>},
+    {<span class="t-d">"role"</span>: <span class="t-s">"user"</span>,      <span class="t-d">"content"</span>: <span class="t-s">"What is AI?"</span>},
+    {<span class="t-d">"role"</span>: <span class="t-s">"assistant"</span>, <span class="t-d">"content"</span>: <span class="t-s">"AI stands for Artificial Intelligence..."</span>}
+  ]
+}</code></pre>
+      </div>
+      <p class="note"><code>instruct</code> mode computes loss on assistant turns only; <code>pretrain</code> mode trains on every token.</p>
+    </div>
+
+    <div class="panel" id="p-inst" role="tabpanel" aria-labelledby="tab-inst" tabindex="0" hidden>
+      <div class="code" style="margin-top:0">
+        <div class="code__bar"><span class="code__name">image_train.jsonl</span><button class="copy" type="button">Copy</button></div>
+<pre><code>{
+  <span class="t-d">"type"</span>: <span class="t-s">"image_generation"</span>,
+  <span class="t-d">"messages"</span>: [
+    {<span class="t-d">"role"</span>: <span class="t-s">"system"</span>,    <span class="t-d">"content"</span>: <span class="t-s">"You are an image generation assistant."</span>},
+    {<span class="t-d">"role"</span>: <span class="t-s">"user"</span>,      <span class="t-d">"content"</span>: <span class="t-s">"Generate a photo of a red sports car"</span>},
+    {<span class="t-d">"role"</span>: <span class="t-s">"assistant"</span>, <span class="t-d">"content"</span>: <span class="t-s">"Here is the image:"</span>}
+  ],
+  <span class="t-d">"target_image"</span>: <span class="t-s">"datasets/images/red_car.jpg"</span>
+}</code></pre>
+      </div>
+      <p class="note">The model learns to emit the assistant text first, then the <code>gen_image</code> tokens appended automatically.</p>
+    </div>
+
+    <div class="panel" id="p-pre" role="tabpanel" aria-labelledby="tab-pre" tabindex="0" hidden>
+      <div class="code" style="margin-top:0">
+        <div class="code__bar"><span class="code__name">pretrain.jsonl</span><button class="copy" type="button">Copy</button></div>
+<pre><code>{
+  <span class="t-d">"type"</span>: <span class="t-s">"image_generation"</span>,
+  <span class="t-d">"messages"</span>: [
+    {<span class="t-d">"role"</span>: <span class="t-s">"user"</span>, <span class="t-d">"content"</span>: <span class="t-s">"A photo of a red sports car"</span>}
+  ],
+  <span class="t-d">"target_image"</span>: <span class="t-s">"datasets/images/red_car.jpg"</span>
+}</code></pre>
+      </div>
+      <p class="note">No system or assistant roles — image tokens follow the prompt directly. Best for large-scale continued pretraining on caption–image pairs.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ================= REPO + TIPS ================= -->
+<section class="section section--alt" id="repo">
+  <div class="wrap split">
+    <div>
+      <div class="kicker">Repository</div>
+      <h2 style="font-size:22px;margin-bottom:16px">What's in the box</h2>
+      <div class="code" style="margin-top:0">
+        <div class="code__bar"><span class="code__name">tree</span></div>
+<pre><code><span class="t-d">hunyuan-image3-finetune/</span>
+├── train_multimodal.py       <span class="t-c"># trainer (text + image losses)</span>
+├── mm_dataset.py             <span class="t-c"># dataset + collator</span>
+├── prepare_text_data.py      <span class="t-c"># alpaca/sharegpt -> jsonl</span>
+├── prepare_image_gen_data.py <span class="t-c"># images + csv -> jsonl</span>
+├── preprocess_images.py      <span class="t-c"># VAE latent caching</span>
+├── train.sh  train_image.sh  train_image_qlora.sh
+├── train_slurm.sh  train_image_slurm.sh
+├── <span class="t-d">configs/</span>                  <span class="t-c"># deepspeed zero-3 (± offload)</span>
+├── <span class="t-d">example_data/</span>             <span class="t-c"># alpaca + t2i samples</span>
+└── <span class="t-d">hunyuan_image_3/</span>          <span class="t-c"># model code (tokenizer fix applied)</span></code></pre>
+      </div>
+    </div>
+
+    <div>
+      <div class="kicker">Tips</div>
+      <h2 style="font-size:22px;margin-bottom:16px">Things that save a run</h2>
+      <ul class="ticks">
+        <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m4 12.5 5 5 11-11"/></svg><span><b>Start small.</b> Validate the loop on a handful of examples before booking a cluster.</span></li>
+        <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m4 12.5 5 5 11-11"/></svg><span><b>Cache latents.</b> For any serious image run, pre-encode first.</span></li>
+        <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m4 12.5 5 5 11-11"/></svg><span><b>Watch memory.</b> Trade batch size against gradient accumulation before renting a bigger GPU.</span></li>
+        <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m4 12.5 5 5 11-11"/></svg><span><b>Keep bf16 on.</b> It's faster, and it's what the VRAM table assumes.</span></li>
+        <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m4 12.5 5 5 11-11"/></svg><span><b>Checkpoint often.</b> Set <code>--save_steps</code> to something you can afford to lose.</span></li>
+        <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m4 12.5 5 5 11-11"/></svg><span><b>Log it.</b> <code>--report_to tensorboard</code> or W&amp;B makes loss curves readable.</span></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ================= ARCHITECTURE ================= -->
+<section class="section" id="model">
+  <div class="wrap">
+    <div class="shead shead--center">
+      <div class="kicker">The base model</div>
+      <h2>HunyuanImage-3.0 in one diagram</h2>
+      <p>A unified autoregressive backbone emitting both text and image tokens, with a VAE decoding generated latents back to pixels.</p>
+    </div>
+    <figure class="figure">
+      <img src="assets/hunyuan_overview.png" width="1752" height="693"
+           alt="Diagram of the HunyuanImage-3.0 architecture: a decoder-only transformer with text and image tokenizers, generation encoder and decoder, covering image understanding, language modeling and image generation paths.">
+      <figcaption>Image source: Hunyuan Image 3 Technical Report.</figcaption>
+    </figure>
+  </div>
+</section>
+
+<!-- ================= KNOWN ISSUE ================= -->
+<section class="section section--alt" id="known-issues">
+  <div class="wrap narrow">
+    <div class="callout">
+      <div class="callout__i" aria-hidden="true">!</div>
+      <div>
+        <h3>Upstream bug: instruct-style tokenization</h3>
+        <p>
+          In the official repo, <code>hunyuan_image_3/tokenizer_wrapper.py</code> (~line 1216) references
+          <code>message_list</code> instead of <code>_message_list</code>, skips the
+          <code>answer_prefix</code>/<code>answer_suffix</code> wrapping on assistant turns, and applies it to
+          user turns instead — which corrupts instruct-style training sequences.
+        </p>
+        <p>
+          <b>The copy vendored here already has the fix.</b> Working from the upstream checkout? The full diff
+          is in the <a href="https://github.com/PhotonAISG/hunyuan-image3-finetune#-known-issues">README</a>.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= CITATION ================= -->
+<section class="section" id="citation">
+  <div class="wrap narrow">
+    <div class="shead">
+      <div class="kicker">Citation</div>
+      <h2>Using this in research?</h2>
+      <p>Cite the repository, and the HunyuanImage-3.0 technical report for the model itself.</p>
+    </div>
+    <div class="code" style="margin-top:0">
+      <div class="code__bar"><span class="code__name">BibTeX</span><button class="copy" type="button">Copy</button></div>
+<pre><code>@misc{hunyuanimage3finetune,
+  author       = {Yang Zhang, Wenzhong Liang, Yanfei Dong},
+  title        = {Finetune HunyuanImage-3.0},
+  year         = {2025},
+  publisher    = {GitHub},
+  journal      = {GitHub repository},
+  howpublished = {\url{https://github.com/PhotonAISG/hunyuan-image3-finetune}}
+}</code></pre>
+    </div>
+    <p class="note">
+      Independent community project, released under AGPL-3.0 for research and educational use. Not the
+      official HunyuanImage-3.0 training code and not affiliated with Tencent — the official repository
+      (inference code and docs) is
+      <a href="https://github.com/Tencent-Hunyuan/HunyuanImage-3.0">Tencent-Hunyuan/HunyuanImage-3.0</a>,
+      under the Tencent Hunyuan Community License Agreement.
+    </p>
+  </div>
+</section>
+
+</main>
+
+<footer class="footer">
+  <div class="wrap">
+    <div class="footer__grid">
+      <div class="footer__about">
+        <a class="brand" href="#top">
+          <span class="mark" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M8 18V6m8 12V6M8 12h8"/></svg></span>
+          <span class="brand__name">hunyuan-image3-finetune</span>
+        </a>
+        <p>Built and maintained by the Pixo team. Issues and pull requests welcome.</p>
+      </div>
+      <div>
+        <h4>Project</h4>
+        <ul>
+          <li><a href="https://github.com/PhotonAISG/hunyuan-image3-finetune">GitHub</a></li>
+          <li><a href="https://github.com/PhotonAISG/hunyuan-image3-finetune/issues">Issues</a></li>
+          <li><a href="https://github.com/PhotonAISG/hunyuan-image3-finetune/pulls">Pull requests</a></li>
+          <li><a href="https://github.com/PhotonAISG/hunyuan-image3-finetune/blob/main/README.md">README</a></li>
+          <li><a href="https://github.com/PhotonAISG/hunyuan-image3-finetune/blob/main/LICENSE">License</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Models</h4>
+        <ul>
+          <li><a href="https://huggingface.co/pixosg/HunyuanImage-3.0-Naruto-Style-Adapter">Naruto adapter</a></li>
+          <li><a href="https://huggingface.co/pixosg/HunyuanImage-3.0-Nezha-Style-Adapter">Nezha adapter</a></li>
+          <li><a href="https://huggingface.co/pixosg/HunyuanImage-3.0-Pixelart-Style-Adapter">Pixel art adapter</a></li>
+          <li><a href="https://github.com/Tencent-Hunyuan/HunyuanImage-3.0">Base model</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Built on</h4>
+        <ul>
+          <li><a href="https://huggingface.co/docs/transformers">Transformers</a></li>
+          <li><a href="https://www.deepspeed.ai/">DeepSpeed</a></li>
+          <li><a href="https://huggingface.co/docs/peft">PEFT</a></li>
+          <li><a href="https://huggingface.co/docs/diffusers">Diffusers</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer__legal">
+      <span>© 2025 Pixo · AGPL-3.0 · <a href="mailto:official@pixo.video">official@pixo.video</a></span>
+      <span>Not affiliated with Tencent or the Hunyuan team.</span>
+    </div>
+  </div>
+</footer>
+
+<script src="main.js"></script>
+</body>
+</html>
