@@ -192,6 +192,11 @@ code, pre, kbd { font-family: var(--mono); }
 }
 .badges img { height: 20px; border-radius: 3px; }
 
+/* who builds this */
+.byline { margin-top: 22px; font-size: 14px; color: var(--muted); }
+.byline a { color: var(--ink); font-weight: 550; }
+.byline a:hover { color: var(--accent-ink); }
+
 /* ---------------- section shell ---------------- */
 .section { padding: 62px 0; }
 .section--alt { background: var(--surface); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
